@@ -1,70 +1,66 @@
 /** \file shapemotion.c
- *  \brief This is a simple shape motion demo.
- *  This demo creates two layers containing shapes.
- *  One layer contains a rectangle and the other a circle.
- *  While the CPU is running the green LED is on, and
- *  when the screen does not need to be redrawn the CPU
- *  is turned off along with the green LED.
+ *  Modified to hold new code for Project 3
+ * Jonathan Esquivel
+ * Id: 80474221
+ * Project 3
  */  
+
 #include <msp430.h>
 #include <libTimer.h>
 #include <lcdutils.h>
 #include <lcddraw.h>
 #include <p2switches.h>
+#include "buzzer.h" // Include buzzer from previous lab to add sound
 #include <shape.h>
 #include <abCircle.h>
+
+
 
 #define GREEN_LED BIT6
 
 
-AbRect rect10 = {abRectGetBounds, abRectCheck, {10,10}}; /**< 10x10 rectangle */
-AbRArrow rightArrow = {abRArrowGetBounds, abRArrowCheck, 30};
+
+AbRect rect10 = {abRectGetBounds, abRectCheck, {10,10}}; /**< 10x10 right paddle */
+AbRect rect20 = {abRectGetBounds, abRectCheck, {10,10}}; /**< 10x10 left paddle */
+
+// AbRArrow rightArrow = {abRArrowGetBounds, abRArrowCheck, 30}; /**<Unsure if neccessary, will leave here */
 
 AbRectOutline fieldOutline = {	/* playing field */
   abRectOutlineGetBounds, abRectOutlineCheck,   
-  {screenWidth/2 - 10, screenHeight/2 - 10}
+  {screenWidth/2 , screenHeight/2 - 10}
 };
 
-Layer layer4 = {
-  (AbShape *)&rightArrow,
+Layer ball = {		/**< Layer with an orange circle */
+  (AbShape *)&circle5,
   {(screenWidth/2)+10, (screenHeight/2)+5}, /**< bit below & right of center */
   {0,0}, {0,0},				    /* last & next pos */
-  COLOR_PINK,
-  0
-};
-  
-
-Layer layer3 = {		/**< Layer with an orange circle */
-  (AbShape *)&circle8,
-  {(screenWidth/2)+10, (screenHeight/2)+5}, /**< bit below & right of center */
-  {0,0}, {0,0},				    /* last & next pos */
-  COLOR_VIOLET,
-  &layer4,
+  COLOR_WHITE,
+  0,
 };
 
 
-Layer fieldLayer = {		/* playing field as a layer */
+Layer field = {		/* playing field as a layer */
   (AbShape *) &fieldOutline,
   {screenWidth/2, screenHeight/2},/**< center */
   {0,0}, {0,0},				    /* last & next pos */
   COLOR_BLACK,
-  &layer3
+  &ball
 };
 
-Layer layer1 = {		/**< Layer with a red square */
+Layer rightPaddle = {		/**< Layer with a white paddle - Is on right */
   (AbShape *)&rect10,
-  {screenWidth/2, screenHeight/2}, /**< center */
+  {screenWidth - 10, screenHeight/2}, /**< center */
   {0,0}, {0,0},				    /* last & next pos */
-  COLOR_RED,
+  COLOR_WHITE,
   &fieldLayer,
 };
 
-Layer layer0 = {		/**< Layer with an orange circle */
-  (AbShape *)&circle14,
-  {(screenWidth/2)+10, (screenHeight/2)+5}, /**< bit below & right of center */
+Layer leftPaddle = {		/**< Layer with a white paddle - Is on left*/
+  (AbShape *)&rect20,
+  {(10, (screenHeight/2)}, /**< Move paddle to center */
   {0,0}, {0,0},				    /* last & next pos */
-  COLOR_ORANGE,
-  &layer1,
+  COLOR_WHITE,
+  &fieldLayer,
 };
 
 /** Moving Layer
@@ -77,6 +73,7 @@ typedef struct MovLayer_s {
   struct MovLayer_s *next;
 } MovLayer;
 
+//Change Movlayers here to involve the ball and two paddles
 /* initial value of {0,0} will be overwritten */
 MovLayer ml3 = { &layer3, {1,1}, 0 }; /**< not all layers move */
 MovLayer ml1 = { &layer1, {1,2}, &ml3 }; 
@@ -154,7 +151,7 @@ void mlAdvance(MovLayer *ml, Region *fence)
 }
 
 
-u_int bgColor = COLOR_BLUE;     /**< The background color */
+u_int bgColor = COLOR_BLACK;     /**< The background color */
 int redrawScreen = 1;           /**< Boolean for whether screen needs to be redrawn */
 
 Region fieldFence;		/**< fence around playing field  */
@@ -171,7 +168,7 @@ void main()
   configureClocks();
   lcd_init();
   shapeInit();
-  p2sw_init(1);
+  p2sw_init(4);
 
   shapeInit();
 
