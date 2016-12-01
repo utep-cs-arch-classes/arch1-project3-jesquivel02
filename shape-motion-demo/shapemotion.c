@@ -10,7 +10,7 @@
 #include <lcdutils.h>
 #include <lcddraw.h>
 #include <p2switches.h>
-#include "buzzer.h" // Include buzzer from previous lab to add sound
+//#include "buzzer.h" // Include buzzer from previous lab to add sound
 #include <shape.h>
 #include <abCircle.h>
 
@@ -195,7 +195,7 @@ void main()
     }
     P1OUT |= GREEN_LED;       /**< Green led on when CPU on */
     redrawScreen = 0;
-    movLayerDraw(&m10, &layer0);
+    movLayerDraw(&m10, &leftPaddle);
   }
 }
     //The switches cant be dont seperately,
