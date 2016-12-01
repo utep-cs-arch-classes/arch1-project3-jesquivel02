@@ -20,8 +20,8 @@
 
 
 //Keep naming convetion of rect10 with rect20
-AbRect rect10 = {abRectGetBounds, abRectCheck, {2,14}}; /**< 10x10 right paddle */
-AbRect rect20 = {abRectGetBounds, abRectCheck, {2,14}}; /**< 10x10 left paddle */
+AbRect rect10 = {abRectGetBounds, abRectCheck, {2,10}}; /**< 2x10 right paddle */
+AbRect rect20 = {abRectGetBounds, abRectCheck, {2,10}}; /**< 2x10 left paddle */
 
 // AbRArrow rightArrow = {abRArrowGetBounds, abRArrowCheck, 30}; /**<Unsure if neccessary, will leave here */
 
@@ -52,7 +52,7 @@ Layer rightPaddle = {		/**< Layer with a white paddle - Is on right */
   {screenWidth - 10, screenHeight/2}, /**< center */
   {0,0}, {0,0},				    /* last & next pos */
   COLOR_WHITE,
-  &fieldLayer,
+  &field,
 };
 
 Layer leftPaddle = {		/**< Layer with a white paddle - Is on left*/
@@ -177,7 +177,7 @@ void main()
   layerDraw(&leftPaddle);
 
 
-  layerGetBounds(&fieldLayer, &fieldFence);
+  layerGetBounds(&field, &fieldFence);
 
 
   enableWDTInterrupts();      /**< enable periodic interrupt */
